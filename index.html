@@ -193,6 +193,41 @@ tr:hover td{background:var(--bg);}
   .dtype-grid{grid-template-columns:repeat(4,1fr);}
   .page{padding:12px 10px 80px;}
 }
+/* PLANNER */
+.plan-day{border:1px solid var(--border);border-radius:var(--r);overflow:hidden;background:var(--card);min-height:320px;display:flex;flex-direction:column;}
+.plan-day.today-col{border-color:#1A6DB5;border-width:2px;}
+.plan-day-hdr{padding:7px 8px 5px;border-bottom:1px solid var(--border);text-align:center;background:var(--bg);}
+.plan-day-name{font-size:11px;font-weight:700;color:var(--t3);letter-spacing:.05em;}
+.plan-day-date{font-size:18px;font-weight:600;color:var(--text);line-height:1.1;}
+.plan-day-type{font-size:9px;font-weight:700;padding:1px 5px;border-radius:10px;display:inline-block;margin-top:2px;}
+.plan-section{border-bottom:.5px solid var(--border);padding:5px 7px;flex:1;}
+.plan-section:last-child{border-bottom:none;}
+.plan-section-lbl{font-size:8px;font-weight:700;letter-spacing:.08em;color:var(--t3);margin-bottom:4px;display:flex;align-items:center;justify-content:space-between;}
+.plan-item{display:flex;align-items:flex-start;gap:4px;margin-bottom:3px;}
+.plan-item input[type=checkbox]{width:12px;height:12px;flex-shrink:0;margin-top:2px;accent-color:var(--text);cursor:pointer;}
+.plan-item-text{font-size:10px;line-height:1.4;flex:1;border:none;background:transparent;font-family:'DM Sans',sans-serif;color:var(--text);resize:none;padding:0;width:100%;}
+.plan-item-text:focus{outline:none;}
+.plan-item-text.crossed{text-decoration:line-through;color:var(--t3);}
+.plan-add-btn{font-size:9px;color:var(--t3);background:none;border:none;cursor:pointer;padding:1px 3px;font-family:'DM Sans',sans-serif;font-weight:600;}
+.plan-add-btn:hover{color:var(--text);}
+.run-col{padding:10px 11px;}
+.run-col-hdr{font-size:10px;font-weight:700;letter-spacing:.07em;margin-bottom:7px;padding-bottom:5px;border-bottom:1px solid var(--border);}
+.run-item{display:flex;align-items:flex-start;gap:5px;margin-bottom:5px;}
+.run-item input[type=checkbox]{width:13px;height:13px;flex-shrink:0;margin-top:2px;cursor:pointer;}
+.run-item-text{font-size:11px;line-height:1.4;flex:1;border:none;background:transparent;font-family:'DM Sans',sans-serif;color:var(--text);padding:0;border-bottom:1px dashed var(--border);}
+.run-item-text:focus{outline:none;border-bottom-color:var(--gray-m);}
+.run-item-text.crossed{text-decoration:line-through;color:var(--t3);}
+.run-add{display:flex;gap:4px;margin-top:6px;}
+.run-add input{flex:1;font-size:11px;padding:3px 5px;border-radius:5px;border:1px solid var(--border);background:var(--bg);font-family:'DM Sans',sans-serif;}
+.run-add input:focus{outline:none;border-color:var(--gray-m);}
+@media(max-width:900px){
+  #planner-grid{grid-template-columns:repeat(4,1fr);}
+}
+@media(max-width:600px){
+  #planner-grid{grid-template-columns:repeat(2,1fr);}
+  #page-planner .run-col{grid-template-columns:1fr 1fr;}
+  #page-planner [style*="grid-template-columns:repeat(4"]{grid-template-columns:1fr 1fr;}
+}
 </style>
 </head>
 <body>
@@ -202,7 +237,8 @@ tr:hover td{background:var(--bg);}
 <nav>
   <div class="nav-brand">Simpson<span>Command Center</span></div>
   <div class="tabs">
-    <button class="tab active" onclick="show('schedule',this)">📅 Schedule</button>
+    <button class="tab active" onclick="show('planner',this)">📓 Planner</button>
+    <button class="tab" onclick="show('schedule',this)">📅 Schedule</button>
     <button class="tab" onclick="show('rules',this)">✅ Rules</button>
     <button class="tab" onclick="show('goals',this)">🎯 Goals</button>
     <button class="tab" onclick="show('overview',this)">💰 Budget</button>
@@ -219,7 +255,7 @@ tr:hover td{background:var(--bg);}
 </nav>
 
 <!-- SCHEDULE -->
-<div class="page active" id="page-schedule">
+<div class="page" id="page-schedule">
   <div class="pg-title">Weekly schedule</div>
   <div class="pg-sub">Set each day · tap 💪 on session days · schedule auto-adjusts</div>
   <div class="leg">
@@ -422,6 +458,41 @@ tr:hover td{background:var(--bg);}
   <div class="pg-sub">Money set aside monthly for planned expenses — syncs across all devices</div>
   <div class="sf-grid" id="sf-grid"></div>
   <button class="btn sec" onclick="addSF()" style="margin-top:9px;">+ Add fund</button>
+</div>
+
+<!-- ═══════════════════════════════════════════════
+     DAILY PLANNER
+═══════════════════════════════════════════════ -->
+<div class="page active" id="page-planner">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;flex-wrap:wrap;gap:8px;">
+    <div>
+      <div class="pg-title">Weekly Planner</div>
+      <div class="pg-sub">Scheduled · Work/Business · Personal · Running lists carry over until cleared</div>
+    </div>
+    <div style="display:flex;gap:6px;align-items:center;">
+      <button class="btn sec" style="font-size:11px;padding:5px 10px;" onclick="plannerPrevWeek()">← Week</button>
+      <div id="planner-week-label" style="font-family:'DM Serif Display',serif;font-size:14px;white-space:nowrap;"></div>
+      <button class="btn sec" style="font-size:11px;padding:5px 10px;" onclick="plannerNextWeek()">Week →</button>
+      <button class="btn sec" style="font-size:11px;padding:5px 10px;" onclick="plannerGoToday()">Today</button>
+    </div>
+  </div>
+
+  <!-- 7-day grid -->
+  <div id="planner-grid" style="display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-bottom:14px;"></div>
+
+  <!-- Running weekly lists -->
+  <div style="border:1px solid var(--border);border-radius:var(--r);overflow:hidden;">
+    <div style="background:var(--gray-l);padding:9px 13px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;">
+      <div style="font-size:11px;font-weight:700;letter-spacing:.07em;color:var(--t3);">📋 WEEKLY RUNNING LISTS — pick one per category each day and move it up top</div>
+      <button class="btn sec sm" onclick="clearAllRunning()" style="font-size:10px;">Clear crossed off</button>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:0;">
+      <div id="run-personal" class="run-col" style="border-right:1px solid var(--border);"></div>
+      <div id="run-notary" class="run-col" style="border-right:1px solid var(--border);"></div>
+      <div id="run-aitg" class="run-col" style="border-right:1px solid var(--border);"></div>
+      <div id="run-travel" class="run-col"></div>
+    </div>
+  </div>
 </div>
 
 <!-- ═══════════════════════════════════════════════
@@ -1191,6 +1262,13 @@ async function loadFromSheets(){
     calEv=data.calendar.map(r=>({name:r.name,amount:parseFloat(r.amount)||0,day:parseInt(r.day)||1,type:r.type}));
     lsv('sc_cal',calEv);
   }
+  if(data.planner&&data.planner.length){
+    data.planner.forEach(r=>{
+      if(r.key==='plannerData'){try{plannerData=JSON.parse(r.value);lsv('sc_planner',plannerData);}catch(e){}}
+      if(r.key==='plannerRunning'){try{plannerRunning=JSON.parse(r.value);lsv('sc_planner_running',plannerRunning);}catch(e){}}
+    });
+    renderPlanner();
+  }
 
   rndTx();rndDebt();rndSF();rndCal();rndBankCards();refreshOv();
   syncStatus('✓ All data loaded from Google Sheets','saved');
@@ -1202,6 +1280,252 @@ function loadOB(){
 }
 
 // ── INIT ──
+// ══════════════════════════════════════════════
+// DAILY PLANNER
+// ══════════════════════════════════════════════
+
+const PLAN_DAYS_SHORT = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+const PLAN_MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
+// plannerWeekOffset: 0 = current week, -1 = last week, etc.
+let plannerWeekOffset = 0;
+
+// Data shape: plannerData[weekKey][dayIndex] = { scheduled:[], workbiz:[], personal:[] }
+// weekKey = 'YYYY-Www'
+// Each item: { id, text, done }
+// Running lists: plannerRunning = { personal:[], notary:[], aitg:[], travel:[] }
+// Each running item: { id, text, done }
+
+let plannerData = lld('sc_planner', {});
+let plannerRunning = lld('sc_planner_running', {
+  personal: [], notary: [], aitg: [], travel: []
+});
+
+function getPlannerWeekKey(offset) {
+  const d = new Date();
+  d.setDate(d.getDate() - d.getDay() + (offset * 7)); // Sunday of that week
+  const yr = d.getFullYear();
+  // ISO week-ish — just use Sun date as key
+  return `${yr}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+}
+
+function getPlannerWeekDates(offset) {
+  const dates = [];
+  const sun = new Date();
+  sun.setDate(sun.getDate() - sun.getDay() + (offset * 7));
+  sun.setHours(0,0,0,0);
+  for (let i = 0; i < 7; i++) {
+    const d = new Date(sun);
+    d.setDate(sun.getDate() + i);
+    dates.push(d);
+  }
+  return dates;
+}
+
+function plannerUID() {
+  return Math.random().toString(36).slice(2,9);
+}
+
+async function savePlanner() {
+  lsv('sc_planner', plannerData);
+  lsv('sc_planner_running', plannerRunning);
+  // Serialize both into a single row for Sheets
+  await apiPost('savePlanner', [{key:'plannerData', value:JSON.stringify(plannerData)},{key:'plannerRunning', value:JSON.stringify(plannerRunning)}]);
+}
+
+function plannerPrevWeek() { plannerWeekOffset--; renderPlanner(); }
+function plannerNextWeek() { plannerWeekOffset++; renderPlanner(); }
+function plannerGoToday()  { plannerWeekOffset = 0; renderPlanner(); }
+
+const DAY_TYPE_STYLE = {
+  shift:   {bg:'#F4F3FE', c:'#3C3489', label:'Night Shift'},
+  post:    {bg:'#FDDCDC', c:'#7A1C1C', label:'Post-Shift'},
+  double:  {bg:'#FFD6A0', c:'#7A3B00', label:'Double Day'},
+  fullday: {bg:'#B5D4F4', c:'#0C447C', label:'Full Day'},
+  off:     {bg:'#EAF3DE', c:'#27500A', label:'Day Off'},
+};
+
+function renderPlannerDay(col, dateObj, dayIdx, weekKey, isToday) {
+  const wkData = plannerData[weekKey] || {};
+  const dayData = wkData[dayIdx] || { scheduled: [], workbiz: [], personal: [] };
+
+  // ensure arrays exist
+  ['scheduled','workbiz','personal'].forEach(k => { if(!dayData[k]) dayData[k] = []; });
+
+  const tp = dayIdx === 0 ? 'shift' : (dTypes[dayIdx] || 'off');
+  const ts = DAY_TYPE_STYLE[tp] || DAY_TYPE_STYLE.off;
+
+  const dateStr = `${PLAN_MONTHS[dateObj.getMonth()]} ${dateObj.getDate()}`;
+
+  const sections = [
+    { key: 'scheduled', label: '⏰ SCHEDULED', color: '#534AB7', light: '#EEEDFE' },
+    { key: 'workbiz',   label: '💼 WORK / BUSINESS', color: '#1A6DB5', light: '#E6F1FB' },
+    { key: 'personal',  label: '🌿 PERSONAL', color: '#2A6B1A', light: '#EAF3DE' },
+  ];
+
+  let html = `
+    <div class="plan-day-hdr">
+      <div class="plan-day-name">${PLAN_DAYS_SHORT[dayIdx]}</div>
+      <div class="plan-day-date">${dateStr}</div>
+      <span class="plan-day-type" style="background:${ts.bg};color:${ts.c};">${ts.label}</span>
+    </div>`;
+
+  sections.forEach(sec => {
+    const items = dayData[sec.key];
+    html += `<div class="plan-section">
+      <div class="plan-section-lbl" style="color:${sec.color};">
+        <span>${sec.label}</span>
+        <button class="plan-add-btn" onclick="addPlanItem('${weekKey}',${dayIdx},'${sec.key}')">+ add</button>
+      </div>`;
+    items.forEach((item, ii) => {
+      html += `<div class="plan-item">
+        <input type="checkbox" ${item.done?'checked':''} onchange="togglePlanItem('${weekKey}',${dayIdx},'${sec.key}',${ii},this.checked)" />
+        <textarea class="plan-item-text${item.done?' crossed':''}" rows="2"
+          onchange="editPlanItem('${weekKey}',${dayIdx},'${sec.key}',${ii},this.value)"
+          onblur="editPlanItem('${weekKey}',${dayIdx},'${sec.key}',${ii},this.value)"
+        >${item.text}</textarea>
+      </div>`;
+    });
+    html += `</div>`;
+  });
+
+  col.className = 'plan-day' + (isToday ? ' today-col' : '');
+  col.innerHTML = html;
+}
+
+function ensurePlanDay(weekKey, dayIdx) {
+  if (!plannerData[weekKey]) plannerData[weekKey] = {};
+  if (!plannerData[weekKey][dayIdx]) plannerData[weekKey][dayIdx] = { scheduled:[], workbiz:[], personal:[] };
+  ['scheduled','workbiz','personal'].forEach(k => {
+    if (!plannerData[weekKey][dayIdx][k]) plannerData[weekKey][dayIdx][k] = [];
+  });
+}
+
+function addPlanItem(weekKey, dayIdx, section) {
+  ensurePlanDay(weekKey, dayIdx);
+  plannerData[weekKey][dayIdx][section].push({ id: plannerUID(), text: '', done: false });
+  savePlanner();
+  renderPlanner();
+  // focus the new textarea after render
+  setTimeout(() => {
+    const col = document.querySelector(`#planner-grid .plan-day:nth-child(${dayIdx+1})`);
+    if (col) {
+      const tas = col.querySelectorAll('.plan-item-text');
+      if (tas.length) tas[tas.length-1].focus();
+    }
+  }, 50);
+}
+
+function togglePlanItem(weekKey, dayIdx, section, ii, checked) {
+  ensurePlanDay(weekKey, dayIdx);
+  plannerData[weekKey][dayIdx][section][ii].done = checked;
+  savePlanner();
+  renderPlanner();
+}
+
+function editPlanItem(weekKey, dayIdx, section, ii, val) {
+  ensurePlanDay(weekKey, dayIdx);
+  if (plannerData[weekKey][dayIdx][section][ii]) {
+    plannerData[weekKey][dayIdx][section][ii].text = val;
+    savePlanner();
+  }
+}
+
+function renderPlanner() {
+  const weekKey = getPlannerWeekKey(plannerWeekOffset);
+  const dates = getPlannerWeekDates(plannerWeekOffset);
+  const today = new Date(); today.setHours(0,0,0,0);
+
+  // Week label
+  const start = dates[0], end = dates[6];
+  document.getElementById('planner-week-label').textContent =
+    `${PLAN_MONTHS[start.getMonth()]} ${start.getDate()} – ${PLAN_MONTHS[end.getMonth()]} ${end.getDate()}, ${end.getFullYear()}`;
+
+  // Day columns
+  const grid = document.getElementById('planner-grid');
+  grid.innerHTML = '';
+  dates.forEach((d, i) => {
+    const col = document.createElement('div');
+    const isToday = d.getTime() === today.getTime();
+    renderPlannerDay(col, d, i, weekKey, isToday);
+    grid.appendChild(col);
+  });
+
+  // Running lists
+  renderRunningLists();
+}
+
+// ── RUNNING LISTS ──
+const RUN_COLS = [
+  { key:'personal', label:'🌿 PERSONAL',  color:'#2A6B1A', light:'#EAF3DE' },
+  { key:'notary',   label:'📋 NOTARY',    color:'#1A6DB5', light:'#E6F1FB' },
+  { key:'aitg',     label:'🚛 AITG',      color:'#993C1D', light:'#FAECE7' },
+  { key:'travel',   label:'✈️ TRAVEL',    color:'#C47A15', light:'#FAEEDA' },
+];
+
+function renderRunningLists() {
+  RUN_COLS.forEach(rc => {
+    const el = document.getElementById('run-'+rc.key);
+    if (!el) return;
+    if (!plannerRunning[rc.key]) plannerRunning[rc.key] = [];
+    const items = plannerRunning[rc.key];
+    let html = `<div class="run-col-hdr" style="color:${rc.color};">${rc.label}</div>`;
+    items.forEach((item, i) => {
+      html += `<div class="run-item">
+        <input type="checkbox" ${item.done?'checked':''} onchange="toggleRunItem('${rc.key}',${i},this.checked)" />
+        <input type="text" class="run-item-text${item.done?' crossed':''}" value="${item.text.replace(/"/g,'&quot;')}"
+          onchange="editRunItem('${rc.key}',${i},this.value)"
+          onblur="editRunItem('${rc.key}',${i},this.value)"
+          placeholder="Add task..." />
+      </div>`;
+    });
+    html += `<div class="run-add">
+      <input type="text" placeholder="+ Add to list..." id="run-inp-${rc.key}"
+        onkeydown="if(event.key==='Enter')addRunItem('${rc.key}')" />
+      <button class="btn sec sm" onclick="addRunItem('${rc.key}')">Add</button>
+    </div>`;
+    el.innerHTML = html;
+  });
+}
+
+function addRunItem(key) {
+  const inp = document.getElementById('run-inp-'+key);
+  if (!inp) return;
+  const val = inp.value.trim();
+  if (!val) return;
+  if (!plannerRunning[key]) plannerRunning[key] = [];
+  plannerRunning[key].push({ id: plannerUID(), text: val, done: false });
+  inp.value = '';
+  savePlanner();
+  renderRunningLists();
+}
+
+function toggleRunItem(key, i, checked) {
+  if (plannerRunning[key] && plannerRunning[key][i]) {
+    plannerRunning[key][i].done = checked;
+    savePlanner();
+    renderRunningLists();
+  }
+}
+
+function editRunItem(key, i, val) {
+  if (plannerRunning[key] && plannerRunning[key][i]) {
+    plannerRunning[key][i].text = val;
+    savePlanner();
+  }
+}
+
+function clearAllRunning() {
+  if (!confirm('Remove all crossed-off items from running lists?')) return;
+  RUN_COLS.forEach(rc => {
+    if (plannerRunning[rc.key]) {
+      plannerRunning[rc.key] = plannerRunning[rc.key].filter(i => !i.done);
+    }
+  });
+  savePlanner();
+  renderRunningLists();
+}
+
 window.addEventListener('DOMContentLoaded',()=>{
   rndSched();
   rndDtype();
@@ -1216,6 +1540,7 @@ window.addEventListener('DOMContentLoaded',()=>{
   rndBankCards();
   refreshOv();
   renderAllBizTasks();
+  renderPlanner();
   loadFromSheets();
 });
 </script>
