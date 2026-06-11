@@ -18,6 +18,7 @@
   --pink:#993556;--pkl:#FBEAF0;--pkm:#F4C0D1;
   --gray:#444441;--gray-l:#F1EFE8;--gray-m:#D3D1C7;
   --gym-bg:#D4F4E2;--gym-c:#0A5C2E;--gym-b:#6DCFA0;
+  --sc-bg:#FBEAF0;--sc-c:#72243E;--sc-b:#F4C0D1;
   --boa:#C8102E;--boa-l:#FFF0F2;--boa-m:#F7C1C8;
   --nfcu:#003087;--nfcu-l:#EEF2FF;--nfcu-m:#B5C4F4;
   --ally:#7B2D8B;--ally-l:#F5EEFF;--ally-m:#D4B5F4;
@@ -105,9 +106,11 @@ tr:hover td{background:var(--bg);}
 .tog.tf{background:#B5D4F4;color:#0C447C;border-color:#378ADD;}
 .tog.to{background:#EAF3DE;color:#27500A;border-color:#639922;}
 .tog.tg{background:var(--gym-bg);color:var(--gym-c);border-color:var(--gym-b);}
+.tog.tsc{background:var(--sc-bg);color:var(--sc-c);border-color:var(--sc-b);}
 .tr-row{display:flex;align-items:center;gap:3px;justify-content:center;margin-top:3px;}
 .tr-inp{font-size:9px;padding:2px 3px;border-radius:5px;border:1px solid var(--gym-b);background:var(--gym-bg);color:var(--gym-c);width:54px;font-family:'DM Sans',sans-serif;font-weight:600;text-align:center;}
-.tr-inp:focus{outline:none;}
+.sc-inp{font-size:9px;padding:2px 3px;border-radius:5px;border:1px solid var(--sc-b);background:var(--sc-bg);color:var(--sc-c);width:54px;font-family:'DM Sans',sans-serif;font-weight:600;text-align:center;}
+.tr-inp:focus,.sc-inp:focus{outline:none;}
 .sf-lbl{font-size:9px;color:var(--pink);font-weight:700;margin-top:2px;}
 .blks{padding:5px;display:flex;flex-direction:column;gap:3px;min-height:170px;}
 .blk{border-radius:5px;padding:4px 6px;font-size:10px;font-weight:500;line-height:1.4;}
@@ -117,6 +120,7 @@ tr:hover td{background:var(--bg);}
 .b-pur{background:var(--pl);color:#3C3489;} .b-grn{background:var(--gl);color:#27500A;}
 .b-chu{background:var(--pkl);color:#72243E;} .b-red{background:var(--rl);color:#7A1C1C;}
 .b-dbl{background:#FFF3E0;color:#7A3B00;} .b-gym{background:var(--gym-bg);color:var(--gym-c);border:1px solid var(--gym-b);}
+.b-sc{background:var(--sc-bg);color:var(--sc-c);border:1px solid var(--sc-b);}
 .sbar{background:var(--card);border:1px solid var(--border);border-radius:var(--rs);padding:8px 12px;font-size:11px;color:var(--t2);display:flex;gap:9px;flex-wrap:wrap;align-items:center;}
 
 .gi{width:100%;font-size:13px;padding:6px 9px;border-radius:var(--rs);border:1px solid var(--border);background:var(--bg);margin-bottom:5px;}
@@ -226,6 +230,7 @@ tr:hover td{background:var(--bg);}
     <span style="display:flex;align-items:center;gap:3px;font-size:10px;"><span class="ld" style="background:#F0997B;"></span>AITG</span>
     <span style="display:flex;align-items:center;gap:3px;font-size:10px;"><span class="ld" style="background:#CECBF6;"></span>Night shift</span>
     <span style="display:flex;align-items:center;gap:3px;font-size:10px;"><span class="ld" style="background:var(--gym-bg);border:1px solid var(--gym-b);"></span>Trainer</span>
+    <span style="display:flex;align-items:center;gap:3px;font-size:10px;"><span class="ld" style="background:var(--sc-bg);border:1px solid var(--sc-b);"></span>Self Care</span>
     <span style="display:flex;align-items:center;gap:3px;font-size:10px;"><span class="ld" style="background:#FDDCDC;"></span>Recovery</span>
     <span style="display:flex;align-items:center;gap:3px;font-size:10px;"><span class="ld" style="background:#EAF3DE;"></span>Free</span>
   </div>
@@ -631,45 +636,192 @@ const BIZC=['b-blue','b-yel','b-ora'];
 let dTypes=['shift','post','shift','double','post','fullday','off'];
 let trOn=[false,false,false,false,false,false,false];
 let trT=['11:00 AM','11:00 AM','11:00 AM','11:00 AM','11:00 AM','11:00 AM','11:00 AM'];
+let scOn=[false,false,false,false,false,false,false];
+let scT=['10:00 AM','10:00 AM','10:00 AM','10:00 AM','10:00 AM','10:00 AM','10:00 AM'];
 function wDates(){const n=new Date(),s=new Date(n);s.setDate(n.getDate()-n.getDay());return Array.from({length:7},(_,i)=>{const d=new Date(s);d.setDate(s.getDate()+i);return(d.getMonth()+1)+'/'+(d.getDate());});}
 const DATES=wDates();
 function pT(s){const m=s.match(/(\d+):(\d+)\s*(AM|PM)?/i);if(!m)return 660;let h=parseInt(m[1]),mn=parseInt(m[2]),ap=(m[3]||'').toUpperCase();if(ap==='PM'&&h!==12)h+=12;if(ap==='AM'&&h===12)h=0;return h*60+mn;}
 function fT(m){const h=Math.floor(m/60),mn=m%60,ap=h>=12?'PM':'AM',hh=h%12||12;return hh+':'+(mn<10?'0':'')+mn+' '+ap;}
 function cntPost(i){let c=0;for(let j=0;j<i;j++)if(dTypes[j]==='post')c++;return c;}
 function bldBlks(i){
-  const tp=dTypes[i],iS=i===0,ht=trOn[i],tS=pT(trT[i]||'11:00 AM'),tE=tS+60,lv=tS-45,hm=tE+45,pb=cntPost(i)%3;
-  if(iS)return[{c:'b-gray',t:'8:00–9:00 AM',l:'Wake up · get ready'},{c:'b-chu',t:'9:30–12:00 PM',l:'Church · every Sunday'},...(ht?[{c:'b-gray',t:fT(lv),l:'Drive to gym'},{c:'b-gym',t:fT(tS)+'–'+fT(tE),l:'💪 Trainer'},{c:'b-gray',t:fT(tE),l:'Drive home'}]:[]),{c:'b-blue',t:'12:30–1:30 PM',l:'SSS · 1 task'},{c:'b-yel',t:'1:30–2:30 PM',l:'STS · 1 task'},{c:'b-gray',t:'2:30–4:30 PM',l:'Rest · recharge'},{c:'b-gray',t:'4:30–5:30 PM',l:'Meal · get ready'},{c:'b-pur',t:'6:30 PM–7 AM',l:'Night shift'}];
-  if(tp==='shift'){if(!ht)return[{c:'b-gray',t:'8:00–8:30 AM',l:'Morning reset'},{c:'b-blue',t:'8:30–10:00 AM',l:'SSS · 90 min'},{c:'b-yel',t:'10:00–11:30 AM',l:'STS · 90 min'},{c:'b-gray',t:'11:30–12:00 PM',l:'Break'},{c:'b-ora',t:'12:00–1:30 PM',l:'AITG · 90 min'},{c:'b-gray',t:'1:30–3:00 PM',l:'Workout'},{c:'b-gray',t:'3:00–5:00 PM',l:'Rest'},{c:'b-gray',t:'5:00–5:30 PM',l:'Meal · get ready'},{c:'b-pur',t:'6:30 PM–7 AM',l:'Night shift'}];
-  return[{c:'b-gray',t:'8:00–8:30 AM',l:'Morning reset'},{c:'b-blue',t:'8:30–'+fT(Math.min(570,lv-15)),l:'SSS · compressed'},{c:'b-yel',t:fT(Math.min(570,lv-15))+'–'+fT(lv),l:'STS · compressed'},{c:'b-gray',t:fT(lv),l:'Drive to gym'},{c:'b-gym',t:fT(tS)+'–'+fT(tE),l:'💪 Trainer'},{c:'b-gray',t:fT(tE),l:'Drive home'},{c:'b-ora',t:fT(hm)+'–'+fT(hm+75),l:'AITG · 75 min'},{c:'b-gray',t:fT(hm+75)+'–5:00 PM',l:'Rest'},{c:'b-gray',t:'5:00–5:30 PM',l:'Meal'},{c:'b-pur',t:'6:30 PM–7 AM',l:'Night shift'}];}
-  if(tp==='post'){if(!ht)return[{c:'b-red',t:'7:00–8:45 AM',l:'Home · NO business'},{c:'b-red',t:'8:45 AM–2:30 PM',l:'SLEEP ONLY · DND on'},{c:'b-gray',t:'2:30–3:00 PM',l:'Wake up · coffee'},{c:BIZC[pb],t:'3:00–4:30 PM',l:BIZ[pb]+' only · 1 task'},{c:'b-gray',t:'4:30–5:00 PM',l:'Meal'},{c:'b-grn',t:'5:00 PM+',l:'Free'}];
-  const lt=tS-45;return lt>=210?[{c:'b-red',t:'7:00–8:45 AM',l:'Home · NO business'},{c:'b-red',t:'8:45 AM–2:30 PM',l:'SLEEP ONLY'},{c:'b-gray',t:'2:30–3:00 PM',l:'Wake up'},{c:BIZC[pb],t:'3:00–'+fT(lt-10),l:BIZ[pb]+' · 1 task'},{c:'b-gray',t:fT(lt),l:'Drive to gym'},{c:'b-gym',t:fT(tS)+'–'+fT(tE),l:'💪 Trainer'},{c:'b-gray',t:fT(tE),l:'Drive home'},{c:'b-grn',t:fT(hm)+'+',l:'Free'}]:[{c:'b-red',t:'7:00–8:45 AM',l:'Home · NO business'},{c:'b-red',t:'8:45 AM–2:30 PM',l:'SLEEP ONLY'},{c:'b-gray',t:'2:30–'+fT(lt),l:'Wake up'},{c:'b-gray',t:fT(lt),l:'Drive to gym'},{c:'b-gym',t:fT(tS)+'–'+fT(tE),l:'💪 Trainer'},{c:'b-gray',t:fT(tE),l:'Drive home'},{c:BIZC[pb],t:fT(hm)+'–'+fT(hm+60),l:BIZ[pb]+' · 1 task'},{c:'b-grn',t:fT(hm+60)+'+',l:'Free'}];}
-  if(tp==='double')return[{c:'b-red',t:'7:00–8:45 AM',l:'Home · NO business'},{c:'b-red',t:'8:45 AM–2:30 PM',l:'SLEEP ONLY · DND on'},{c:'b-dbl',t:'2:30–5:00 PM',l:'Rest only · NO business'},{c:'b-gray',t:'5:00–5:30 PM',l:'Meal'},{c:'b-pur',t:'6:30 PM–7 AM',l:'Night shift'}];
-  if(tp==='fullday'){if(!ht)return[{c:'b-gray',t:'8:00–8:30 AM',l:'Morning reset'},{c:'b-blue',t:'8:30–10:00 AM',l:'SSS · 90 min'},{c:'b-yel',t:'10:00–11:30 AM',l:'STS · 90 min'},{c:'b-gray',t:'11:30–12:00 PM',l:'Break'},{c:'b-ora',t:'12:00–1:30 PM',l:'AITG · 90 min'},{c:'b-gray',t:'1:30–3:00 PM',l:'Workout'},{c:'b-grn',t:'3:00 PM+',l:'Free'}];
-  return[{c:'b-gray',t:'8:00–8:30 AM',l:'Morning reset'},{c:'b-blue',t:'8:30–10:00 AM',l:'SSS · 90 min'},{c:'b-yel',t:'10:00–11:30 AM',l:'STS · 90 min'},{c:'b-gray',t:'11:30–12:00 PM',l:'Break'},{c:'b-ora',t:'12:00–1:30 PM',l:'AITG · 90 min'},{c:'b-gray',t:fT(lv),l:'Drive to gym'},{c:'b-gym',t:fT(tS)+'–'+fT(tE),l:'💪 Trainer'},{c:'b-gray',t:fT(tE),l:'Drive home'},{c:'b-grn',t:fT(hm)+'+',l:'Free'}];}
-  return[{c:'b-grn',t:'All day',l:'Rest & recharge'},{c:'b-grn',t:'Optional',l:'1 task if you feel like it'}];
+  const tp=dTypes[i],iS=i===0,ht=trOn[i],sc2=scOn[i];
+  const tS=pT(trT[i]||'11:00 AM'),tE=tS+60,lv=tS-45,hm=tE+45;
+  const sS=pT(scT[i]||'10:00 AM'),sE=sS+180; // self-care = 3 hrs
+  const pb=cntPost(i)%3;
+
+  // self-care block helper
+  const scBlk={c:'b-sc',t:fT(sS)+'–'+fT(sE),l:'💅 Self care · hair/nails/wax'};
+
+  if(iS)return[
+    {c:'b-gray',t:'8:00–9:00 AM',l:'Wake up · get ready'},
+    {c:'b-chu',t:'9:30–12:00 PM',l:'Church · every Sunday'},
+    ...(ht?[{c:'b-gray',t:fT(lv),l:'Drive to gym'},{c:'b-gym',t:fT(tS)+'–'+fT(tE),l:'💪 Trainer'},{c:'b-gray',t:fT(tE),l:'Drive home'}]:[]),
+    ...(sc2?[scBlk]:[]),
+    {c:'b-blue',t:'12:30–1:30 PM',l:'SSS · 1 task'},
+    {c:'b-yel',t:'1:30–2:30 PM',l:'STS · 1 task'},
+    {c:'b-gray',t:'2:30–4:30 PM',l:'Rest · recharge'},
+    {c:'b-gray',t:'4:30–5:30 PM',l:'Meal · get ready'},
+    {c:'b-pur',t:'6:30 PM–7 AM',l:'Night shift'}
+  ];
+
+  if(tp==='shift'){
+    if(sc2){
+      // self-care on a shift day — compress biz blocks around it
+      const bizEnd=Math.min(sS-15,480); // stop biz at least 15min before appt
+      return[
+        {c:'b-gray',t:'8:00–8:30 AM',l:'Morning reset'},
+        {c:'b-blue',t:'8:30–'+fT(Math.min(540,bizEnd)),l:'SSS · compressed'},
+        {c:'b-yel',t:fT(Math.min(540,bizEnd))+'–'+fT(bizEnd),l:'STS · compressed'},
+        scBlk,
+        ...(ht?[{c:'b-gray',t:fT(Math.max(sE,lv)),l:'Drive to gym'},{c:'b-gym',t:fT(Math.max(sE+45,tS))+'–'+fT(Math.max(sE+45,tS)+60),l:'💪 Trainer'},{c:'b-gray',t:fT(Math.max(sE+45,tS)+60),l:'Drive home'}]:[]),
+        {c:'b-gray',t:fT(sE+(ht?hm-tS+60:0))+'–5:00 PM',l:'Rest'},
+        {c:'b-gray',t:'5:00–5:30 PM',l:'Meal · get ready'},
+        {c:'b-pur',t:'6:30 PM–7 AM',l:'Night shift'}
+      ];
+    }
+    if(!ht)return[
+      {c:'b-gray',t:'8:00–8:30 AM',l:'Morning reset'},
+      {c:'b-blue',t:'8:30–10:00 AM',l:'SSS · 90 min'},
+      {c:'b-yel',t:'10:00–11:30 AM',l:'STS · 90 min'},
+      {c:'b-gray',t:'11:30–12:00 PM',l:'Break'},
+      {c:'b-ora',t:'12:00–1:30 PM',l:'AITG · 90 min'},
+      {c:'b-gray',t:'1:30–3:00 PM',l:'Workout'},
+      {c:'b-gray',t:'3:00–5:00 PM',l:'Rest'},
+      {c:'b-gray',t:'5:00–5:30 PM',l:'Meal · get ready'},
+      {c:'b-pur',t:'6:30 PM–7 AM',l:'Night shift'}
+    ];
+    return[
+      {c:'b-gray',t:'8:00–8:30 AM',l:'Morning reset'},
+      {c:'b-blue',t:'8:30–'+fT(Math.min(570,lv-15)),l:'SSS · compressed'},
+      {c:'b-yel',t:fT(Math.min(570,lv-15))+'–'+fT(lv),l:'STS · compressed'},
+      {c:'b-gray',t:fT(lv),l:'Drive to gym'},
+      {c:'b-gym',t:fT(tS)+'–'+fT(tE),l:'💪 Trainer'},
+      {c:'b-gray',t:fT(tE),l:'Drive home'},
+      {c:'b-ora',t:fT(hm)+'–'+fT(hm+75),l:'AITG · 75 min'},
+      {c:'b-gray',t:fT(hm+75)+'–5:00 PM',l:'Rest'},
+      {c:'b-gray',t:'5:00–5:30 PM',l:'Meal'},
+      {c:'b-pur',t:'6:30 PM–7 AM',l:'Night shift'}
+    ];
+  }
+
+  if(tp==='post'){
+    if(sc2){
+      return[
+        {c:'b-red',t:'7:00–8:45 AM',l:'Home · NO business'},
+        {c:'b-red',t:'8:45 AM–2:30 PM',l:'SLEEP ONLY · DND on'},
+        {c:'b-gray',t:'2:30–3:00 PM',l:'Wake up · coffee'},
+        scBlk,
+        {c:'b-grn',t:fT(sE)+'+',l:'Free — no biz on post+self care day'}
+      ];
+    }
+    if(!ht)return[
+      {c:'b-red',t:'7:00–8:45 AM',l:'Home · NO business'},
+      {c:'b-red',t:'8:45 AM–2:30 PM',l:'SLEEP ONLY · DND on'},
+      {c:'b-gray',t:'2:30–3:00 PM',l:'Wake up · coffee'},
+      {c:BIZC[pb],t:'3:00–4:30 PM',l:BIZ[pb]+' only · 1 task'},
+      {c:'b-gray',t:'4:30–5:00 PM',l:'Meal'},
+      {c:'b-grn',t:'5:00 PM+',l:'Free'}
+    ];
+    const lt=tS-45;return lt>=210?[
+      {c:'b-red',t:'7:00–8:45 AM',l:'Home · NO business'},
+      {c:'b-red',t:'8:45 AM–2:30 PM',l:'SLEEP ONLY'},
+      {c:'b-gray',t:'2:30–3:00 PM',l:'Wake up'},
+      {c:BIZC[pb],t:'3:00–'+fT(lt-10),l:BIZ[pb]+' · 1 task'},
+      {c:'b-gray',t:fT(lt),l:'Drive to gym'},
+      {c:'b-gym',t:fT(tS)+'–'+fT(tE),l:'💪 Trainer'},
+      {c:'b-gray',t:fT(tE),l:'Drive home'},
+      {c:'b-grn',t:fT(hm)+'+',l:'Free'}
+    ]:[
+      {c:'b-red',t:'7:00–8:45 AM',l:'Home · NO business'},
+      {c:'b-red',t:'8:45 AM–2:30 PM',l:'SLEEP ONLY'},
+      {c:'b-gray',t:'2:30–'+fT(lt),l:'Wake up'},
+      {c:'b-gray',t:fT(lt),l:'Drive to gym'},
+      {c:'b-gym',t:fT(tS)+'–'+fT(tE),l:'💪 Trainer'},
+      {c:'b-gray',t:fT(tE),l:'Drive home'},
+      {c:BIZC[pb],t:fT(hm)+'–'+fT(hm+60),l:BIZ[pb]+' · 1 task'},
+      {c:'b-grn',t:fT(hm+60)+'+',l:'Free'}
+    ];
+  }
+
+  if(tp==='double')return[
+    {c:'b-red',t:'7:00–8:45 AM',l:'Home · NO business'},
+    {c:'b-red',t:'8:45 AM–2:30 PM',l:'SLEEP ONLY · DND on'},
+    {c:'b-dbl',t:'2:30–5:00 PM',l:'Rest only · NO business'},
+    {c:'b-gray',t:'5:00–5:30 PM',l:'Meal'},
+    {c:'b-pur',t:'6:30 PM–7 AM',l:'Night shift'}
+  ];
+
+  if(tp==='fullday'){
+    if(sc2){
+      const bizEnd=Math.min(sS-15,480);
+      return[
+        {c:'b-gray',t:'8:00–8:30 AM',l:'Morning reset'},
+        {c:'b-blue',t:'8:30–'+fT(Math.min(540,bizEnd)),l:'SSS · compressed'},
+        {c:'b-yel',t:fT(Math.min(540,bizEnd))+'–'+fT(bizEnd),l:'STS · compressed'},
+        scBlk,
+        ...(ht?[{c:'b-gray',t:fT(sE+15),l:'Drive to gym'},{c:'b-gym',t:fT(sE+60)+'–'+fT(sE+120),l:'💪 Trainer'},{c:'b-gray',t:fT(sE+120),l:'Drive home'}]:[]),
+        {c:'b-grn',t:fT(sE+(ht?120:0))+'+',l:'Free'}
+      ];
+    }
+    if(!ht)return[
+      {c:'b-gray',t:'8:00–8:30 AM',l:'Morning reset'},
+      {c:'b-blue',t:'8:30–10:00 AM',l:'SSS · 90 min'},
+      {c:'b-yel',t:'10:00–11:30 AM',l:'STS · 90 min'},
+      {c:'b-gray',t:'11:30–12:00 PM',l:'Break'},
+      {c:'b-ora',t:'12:00–1:30 PM',l:'AITG · 90 min'},
+      {c:'b-gray',t:'1:30–3:00 PM',l:'Workout'},
+      {c:'b-grn',t:'3:00 PM+',l:'Free'}
+    ];
+    return[
+      {c:'b-gray',t:'8:00–8:30 AM',l:'Morning reset'},
+      {c:'b-blue',t:'8:30–10:00 AM',l:'SSS · 90 min'},
+      {c:'b-yel',t:'10:00–11:30 AM',l:'STS · 90 min'},
+      {c:'b-gray',t:'11:30–12:00 PM',l:'Break'},
+      {c:'b-ora',t:'12:00–1:30 PM',l:'AITG · 90 min'},
+      {c:'b-gray',t:fT(lv),l:'Drive to gym'},
+      {c:'b-gym',t:fT(tS)+'–'+fT(tE),l:'💪 Trainer'},
+      {c:'b-gray',t:fT(tE),l:'Drive home'},
+      {c:'b-grn',t:fT(hm)+'+',l:'Free'}
+    ];
+  }
+
+  // off day
+  if(sc2)return[
+    scBlk,
+    {c:'b-grn',t:fT(sE)+'+',l:'Free — enjoy your day'}
+  ];
+  return[
+    {c:'b-grn',t:'All day',l:'Rest & recharge'},
+    {c:'b-grn',t:'Optional',l:'1 task if you feel like it'}
+  ];
 }
 const TM={shift:{lb:'Night Shift',bg:'#F4F3FE',p:'background:#CECBF6;color:#3C3489;'},post:{lb:'Post-Shift',bg:'#FDF5F5',p:'background:#FDDCDC;color:#7A1C1C;'},double:{lb:'Double Day',bg:'#FFF8EE',p:'background:#FFD6A0;color:#7A3B00;'},fullday:{lb:'Full Day',bg:'#EDF4FB',p:'background:#B5D4F4;color:#0C447C;'},off:{lb:'Day Off',bg:'#F2F9EC',p:'background:#EAF3DE;color:#27500A;'}};
 function rndSched(){
   const g=document.getElementById('day-grid');g.innerHTML='';
-  let sc=0,pc=0,fc=0,dc=0,oc=0,gc=0;
+  let sc=0,pc=0,fc=0,dc=0,oc=0,gc=0,scc=0;
   dTypes.forEach((tp,i)=>{
-    const iS=i===0;if(iS||tp==='shift')sc++;else if(tp==='post')pc++;else if(tp==='fullday')fc++;else if(tp==='double')dc++;else oc++;if(trOn[i])gc++;
+    const iS=i===0;if(iS||tp==='shift')sc++;else if(tp==='post')pc++;else if(tp==='fullday')fc++;else if(tp==='double')dc++;else oc++;if(trOn[i])gc++;if(scOn[i])scc++;
     const col=document.createElement('div');col.className='dc';
     const m=iS?{lb:'Church+Shift',bg:'#FBEAF0',p:'background:#F4C0D1;color:#72243E;'}:TM[tp];
     const gb=trOn[i]?`<div style="font-size:9px;font-weight:700;color:var(--gym-c);margin-top:2px;">💪 ${trT[i]}</div>`:'';
+    const scb=scOn[i]?`<div style="font-size:9px;font-weight:700;color:var(--sc-c);margin-top:1px;">💅 ${scT[i]}</div>`:'';
     const tc=iS?`<div class="sf-lbl">🔒 Church + shift</div>`:`<div class="tog-row"><button class="tog ${tp==='shift'?'ts':''}" onclick="sDay(${i},'shift')">Shift</button><button class="tog ${tp==='post'?'tp2':''}" onclick="sDay(${i},'post')">Post</button><button class="tog ${tp==='double'?'td2':''}" onclick="sDay(${i},'double')">Dbl</button><button class="tog ${tp==='fullday'?'tf':''}" onclick="sDay(${i},'fullday')">Full</button><button class="tog ${tp==='off'?'to':''}" onclick="sDay(${i},'off')">Off</button></div>`;
-    const tt=`<div class="tr-row"><button class="tog ${trOn[i]?'tg':''}" onclick="togTr(${i})">💪</button>${trOn[i]?`<input class="tr-inp" type="text" value="${trT[i]}" onchange="sTrT(${i},this.value)" />`:''}</div>`;
-    col.innerHTML=`<div class="dh" style="background:${m.bg};"><div class="dn">${DAYS[i]}</div><div class="dd">${DATES[i]}</div><span class="tp" style="${m.p}">${m.lb}</span>${gb}${tc}${tt}</div><div class="blks" id="db-${i}"></div>`;
+    const tt=`<div class="tr-row"><button class="tog ${trOn[i]?'tg':''}" onclick="togTr(${i})">💪</button>${trOn[i]?`<input class="tr-inp" type="text" value="${trT[i]}" onchange="sTrT(${i},this.value)" />`:''}
+    <button class="tog ${scOn[i]?'tsc':''}" onclick="togSc(${i})">💅</button>${scOn[i]?`<input class="sc-inp" type="text" value="${scT[i]}" onchange="sScT(${i},this.value)" />`:''}
+    </div>`;
+    col.innerHTML=`<div class="dh" style="background:${m.bg};"><div class="dn">${DAYS[i]}</div><div class="dd">${DATES[i]}</div><span class="tp" style="${m.p}">${m.lb}</span>${gb}${scb}${tc}${tt}</div><div class="blks" id="db-${i}"></div>`;
     g.appendChild(col);
     const ct=document.getElementById('db-'+i);
     bldBlks(i).forEach(b=>{const el=document.createElement('div');el.className='blk '+b.c;el.innerHTML=`<span class="bt">${b.t}</span>${b.l}`;ct.appendChild(el);});
   });
   const slots=sc*3+fc*3+pc;
-  document.getElementById('sbar').innerHTML=`<strong>${sc}</strong> shifts &nbsp;·&nbsp;<strong>${dc}</strong> double &nbsp;·&nbsp;<strong>${pc}</strong> post-shift &nbsp;·&nbsp;<strong>${fc}</strong> full &nbsp;·&nbsp;<strong>${oc}</strong> off &nbsp;·&nbsp;<span style="color:var(--gym-c);"><strong>${gc}</strong> trainer</span> &nbsp;·&nbsp;<span style="padding-left:8px;border-left:1px solid var(--border);"><strong>${slots}</strong> task slots</span>`;
+  document.getElementById('sbar').innerHTML=`<strong>${sc}</strong> shifts &nbsp;·&nbsp;<strong>${dc}</strong> double &nbsp;·&nbsp;<strong>${pc}</strong> post-shift &nbsp;·&nbsp;<strong>${fc}</strong> full &nbsp;·&nbsp;<strong>${oc}</strong> off &nbsp;·&nbsp;<span style="color:var(--gym-c);"><strong>${gc}</strong> trainer</span> &nbsp;·&nbsp;<span style="color:var(--sc-c);"><strong>${scc}</strong> self care</span> &nbsp;·&nbsp;<span style="padding-left:8px;border-left:1px solid var(--border);"><strong>${slots}</strong> task slots</span>`;
 }
 function sDay(i,t){dTypes[i]=t;rndSched();}
 function togTr(i){trOn[i]=!trOn[i];rndSched();}
 function sTrT(i,v){trT[i]=v;rndSched();}
+function togSc(i){scOn[i]=!scOn[i];rndSched();}
+function sScT(i,v){scT[i]=v;rndSched();}
 
 // ── GOALS ──
 const DDAYS=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
