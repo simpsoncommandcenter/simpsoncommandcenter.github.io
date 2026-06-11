@@ -46,6 +46,8 @@ nav{background:var(--card);border-bottom:1.5px solid var(--border);display:flex;
 .tab.biz-sss{border-bottom-color:transparent;}.tab.biz-sss.active{border-bottom-color:#1A6DB5;color:#1A6DB5;}
 .tab.biz-sts{border-bottom-color:transparent;}.tab.biz-sts.active{border-bottom-color:#C47A15;color:#C47A15;}
 .tab.biz-tss{border-bottom-color:transparent;}.tab.biz-tss.active{border-bottom-color:#534AB7;color:#534AB7;}
+.tab.biz-ast{border-bottom-color:transparent;}.tab.biz-ast.active{border-bottom-color:#E91E8C;color:#E91E8C;}
+.tab.biz-aitg{border-bottom-color:transparent;}.tab.biz-aitg.active{border-bottom-color:#C05020;color:#C05020;}
 .tab-divider{width:1px;background:var(--border);margin:8px 4px;flex-shrink:0;}
 .page{display:none;padding:18px 16px 80px;max-width:1040px;margin:0 auto;}
 .page.active{display:block;}
@@ -193,7 +195,25 @@ tr:hover td{background:var(--bg);}
   .dtype-grid{grid-template-columns:repeat(4,1fr);}
   .page{padding:12px 10px 80px;}
 }
-/* PLANNER */
+/* NOTES */
+.note-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:13px 14px;display:flex;flex-direction:column;gap:8px;position:relative;}
+.note-card.pinned{border-color:var(--am);border-width:2px;}
+.note-card-top{display:flex;align-items:center;gap:6px;}
+.note-title-inp{flex:1;font-size:13px;font-weight:600;font-family:'DM Serif Display',serif;border:none;background:transparent;color:var(--text);padding:0;}
+.note-title-inp:focus{outline:none;}
+.note-title-inp::placeholder{color:var(--t3);font-style:italic;}
+.note-body-inp{width:100%;font-size:12px;font-family:'DM Sans',sans-serif;color:var(--text);border:none;background:transparent;resize:none;line-height:1.7;padding:0;min-height:80px;}
+.note-body-inp:focus{outline:none;}
+.note-body-inp::placeholder{color:var(--t3);}
+.note-footer{display:flex;align-items:center;gap:6px;padding-top:6px;border-top:.5px solid var(--border);}
+.note-tag-sel{font-size:10px;padding:2px 5px;border-radius:var(--rs);border:1px solid var(--border);background:var(--bg);font-family:'DM Sans',sans-serif;color:var(--t2);}
+.note-tag-sel:focus{outline:none;}
+.note-ts{font-size:9px;color:var(--t3);margin-left:auto;}
+.note-pin-btn{font-size:11px;background:none;border:none;cursor:pointer;padding:2px 4px;border-radius:4px;}
+.note-pin-btn:hover{background:var(--al);}
+.note-del-btn{font-size:10px;background:none;border:none;cursor:pointer;color:var(--t3);padding:2px 5px;border-radius:4px;font-family:'DM Sans',sans-serif;}
+.note-del-btn:hover{background:var(--rl);color:var(--red);}
+</style>
 .plan-day{border:1px solid var(--border);border-radius:var(--r);overflow:hidden;background:var(--card);min-height:320px;display:flex;flex-direction:column;}
 .plan-day.today-col{border-color:#1A6DB5;border-width:2px;}
 .plan-day-hdr{padding:7px 8px 5px;border-bottom:1px solid var(--border);text-align:center;background:var(--bg);}
@@ -237,7 +257,8 @@ tr:hover td{background:var(--bg);}
 <nav>
   <div class="nav-brand">Simpson<span>Command Center</span></div>
   <div class="tabs">
-    <button class="tab active" onclick="show('planner',this)">📓 Planner</button>
+    <button class="tab active" onclick="show('notes',this)">📝 Notes</button>
+    <button class="tab" onclick="show('planner',this)">📓 Planner</button>
     <button class="tab" onclick="show('schedule',this)">📅 Schedule</button>
     <button class="tab" onclick="show('rules',this)">✅ Rules</button>
     <button class="tab" onclick="show('goals',this)">🎯 Goals</button>
@@ -250,7 +271,9 @@ tr:hover td{background:var(--bg);}
     <div class="tab-divider"></div>
     <button class="tab biz-sss" onclick="show('sss',this)">📋 SSS</button>
     <button class="tab biz-sts" onclick="show('sts',this)">✈️ STS</button>
+    <button class="tab biz-aitg" onclick="show('aitg',this)">🚛 AITG</button>
     <button class="tab biz-tss" onclick="show('tss',this)">⭐ TSS</button>
+    <button class="tab biz-ast" onclick="show('ast',this)">🌟 AST</button>
   </div>
 </nav>
 
@@ -305,6 +328,7 @@ tr:hover td{background:var(--bg);}
   <div class="card" style="border-left:3px solid #B5D4F4;margin-bottom:6px;"><div style="display:flex;align-items:center;gap:7px;margin-bottom:7px;"><div style="width:24px;height:24px;border-radius:50%;background:#E6F1FB;display:flex;align-items:center;justify-content:center;font-size:11px;">📋</div><div style="font-size:12px;font-weight:600;color:#1A6DB5;">SSS — Simpson Signing Solutions</div></div><input id="g-sss" class="gi" type="text" placeholder="This week I will complete..." /><div class="gr"><label>By when?</label><input id="g-sss-w" type="text" placeholder="e.g. Tuesday" /><div class="dc2"><input id="g-sss-d" type="checkbox" /><label for="g-sss-d">Done</label></div></div></div>
   <div class="card" style="border-left:3px solid #FAC775;margin-bottom:6px;"><div style="display:flex;align-items:center;gap:7px;margin-bottom:7px;"><div style="width:24px;height:24px;border-radius:50%;background:#FAEEDA;display:flex;align-items:center;justify-content:center;font-size:11px;">✈️</div><div style="font-size:12px;font-weight:600;color:#C47A15;">STS — Simpson Travel Solutions</div></div><input id="g-sts" class="gi" type="text" placeholder="This week I will complete..." /><div class="gr"><label>By when?</label><input id="g-sts-w" type="text" placeholder="e.g. Friday" /><div class="dc2"><input id="g-sts-d" type="checkbox" /><label for="g-sts-d">Done</label></div></div></div>
   <div class="card" style="border-left:3px solid #F0997B;margin-bottom:6px;"><div style="display:flex;align-items:center;gap:7px;margin-bottom:7px;"><div style="width:24px;height:24px;border-radius:50%;background:#FAECE7;display:flex;align-items:center;justify-content:center;font-size:11px;">🚛</div><div style="font-size:12px;font-weight:600;color:#C05020;">AITG — All In Transportation Group</div></div><input id="g-aitg" class="gi" type="text" placeholder="This week I will complete..." /><div class="gr"><label>By when?</label><input id="g-aitg-w" type="text" placeholder="e.g. Thursday" /><div class="dc2"><input id="g-aitg-d" type="checkbox" /><label for="g-aitg-d">Done</label></div></div></div>
+  <div class="card" style="border-left:3px solid #F4C0D1;margin-bottom:6px;"><div style="display:flex;align-items:center;gap:7px;margin-bottom:7px;"><div style="width:24px;height:24px;border-radius:50%;background:#FBEAF0;display:flex;align-items:center;justify-content:center;font-size:11px;">🌟</div><div style="font-size:12px;font-weight:600;color:#E91E8C;">AST — All Stars of Tomorrow</div></div><input id="g-ast" class="gi" type="text" placeholder="This week I will complete..." /><div class="gr"><label>By when?</label><input id="g-ast-w" type="text" placeholder="e.g. Friday" /><div class="dc2"><input id="g-ast-d" type="checkbox" /><label for="g-ast-d">Done</label></div></div></div>
   <div class="card" style="border-left:3px solid #9FE1CB;margin-bottom:6px;"><div style="display:flex;align-items:center;gap:7px;margin-bottom:7px;"><div style="width:24px;height:24px;border-radius:50%;background:#E1F5EE;display:flex;align-items:center;justify-content:center;font-size:11px;">💚</div><div style="font-size:12px;font-weight:600;color:#2A6B1A;">Personal</div></div><input id="g-per" class="gi" type="text" placeholder="One thing just for me..." /><div class="gr"><label>By when?</label><input id="g-per-w" type="text" placeholder="e.g. Saturday" /><div class="dc2"><input id="g-per-d" type="checkbox" /><label for="g-per-d">Done</label></div></div></div>
   <div class="two" style="margin-top:7px;"><div class="card"><div class="ml">🛡️ I will protect</div><textarea id="g-prot" rows="3" placeholder="What boundary are you guarding?"></textarea></div><div class="card"><div class="ml">🎉 I will celebrate when</div><textarea id="g-cel" rows="3" placeholder="What counts as a win?"></textarea></div></div>
   <div class="card" style="margin-top:7px;"><div class="ml" style="margin-bottom:8px;">📆 Day types this week</div><div class="dtype-grid" id="dtype-grid"></div><div style="font-size:11px;color:var(--t2);text-align:center;margin-top:6px;padding-top:6px;border-top:.5px solid var(--border);" id="dtype-slots">Set your days to see task slots.</div></div>
@@ -411,7 +435,7 @@ tr:hover td{background:var(--bg);}
           <option value="fid">📈 Fidelity Roth</option>
         </select></div>
       <div><div style="font-size:10px;color:var(--t3);margin-bottom:2px;">Category</div>
-        <select id="tx-ca"><option>Housing</option><option>Insurance</option><option>Utilities</option><option>Phone</option><option>Food & Groceries</option><option>Dining Out</option><option>Entertainment</option><option>Transportation</option><option>Medical</option><option>Personal Spending</option><option>SSS Business</option><option>STS Business</option><option>AITG Business</option><option>Sinking Fund</option><option>Debt Payment</option><option>Income</option><option>Other</option></select></div>
+        <select id="tx-ca"><option>Housing</option><option>Insurance</option><option>Utilities</option><option>Phone</option><option>Food & Groceries</option><option>Dining Out</option><option>Entertainment</option><option>Transportation</option><option>Medical</option><option>Personal Spending</option><option>SSS Business</option><option>STS Business</option><option>AITG Business</option><option>AST Business</option><option>Sinking Fund</option><option>Debt Payment</option><option>Income</option><option>Other</option></select></div>
       <div><div style="font-size:10px;color:var(--t3);margin-bottom:2px;">Amount</div><input type="number" id="tx-am" placeholder="0.00" /></div>
       <div><div style="font-size:10px;color:var(--t3);margin-bottom:2px;">Type</div>
         <select id="tx-ty"><option value="expense">💸 Expense</option><option value="income">💵 Income</option><option value="transfer">↔️ Transfer</option></select></div>
@@ -461,9 +485,26 @@ tr:hover td{background:var(--bg);}
 </div>
 
 <!-- ═══════════════════════════════════════════════
+     NOTES
+═══════════════════════════════════════════════ -->
+<div class="page active" id="page-notes">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;flex-wrap:wrap;gap:8px;">
+    <div>
+      <div class="pg-title">Notes</div>
+      <div class="pg-sub">Brain dump anything — ideas, reminders, thoughts · syncs across devices</div>
+    </div>
+    <div style="display:flex;gap:6px;">
+      <button class="btn sec" style="font-size:11px;padding:5px 10px;" onclick="addNote()">+ New note</button>
+      <button class="btn sec" style="font-size:11px;padding:5px 10px;" onclick="clearDoneNotes()">Clear done</button>
+    </div>
+  </div>
+  <div id="notes-container" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:10px;"></div>
+</div>
+
+<!-- ═══════════════════════════════════════════════
      DAILY PLANNER
 ═══════════════════════════════════════════════ -->
-<div class="page active" id="page-planner">
+<div class="page" id="page-planner">
   <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;flex-wrap:wrap;gap:8px;">
     <div>
       <div class="pg-title">Weekly Planner</div>
@@ -486,11 +527,12 @@ tr:hover td{background:var(--bg);}
       <div style="font-size:11px;font-weight:700;letter-spacing:.07em;color:var(--t3);">📋 WEEKLY RUNNING LISTS — pick one per category each day and move it up top</div>
       <button class="btn sec sm" onclick="clearAllRunning()" style="font-size:10px;">Clear crossed off</button>
     </div>
-    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:0;">
+    <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:0;">
       <div id="run-personal" class="run-col" style="border-right:1px solid var(--border);"></div>
       <div id="run-notary" class="run-col" style="border-right:1px solid var(--border);"></div>
       <div id="run-aitg" class="run-col" style="border-right:1px solid var(--border);"></div>
-      <div id="run-travel" class="run-col"></div>
+      <div id="run-travel" class="run-col" style="border-right:1px solid var(--border);"></div>
+      <div id="run-ast" class="run-col"></div>
     </div>
   </div>
 </div>
@@ -592,6 +634,74 @@ tr:hover td{background:var(--bg);}
 
   <div class="section-label" style="margin-top:18px;">⚖️ LEGAL STRUCTURE (long-term)</div>
   <div class="task-list" id="tss-tasks-legal"></div>
+</div>
+
+<!-- ═══════════════════════════════════════════════
+     AST — ALL STARS OF TOMORROW
+═══════════════════════════════════════════════ -->
+<div class="page" id="page-ast">
+  <div class="pg-title">All Stars of Tomorrow</div>
+  <div class="pg-sub">Vision · Research · Planning — 2027/2028 launch target</div>
+
+  <div class="biz-header" style="background:#FBEAF0;border-color:#F4C0D1;">
+    <div class="biz-icon" style="background:#E91E8C;">🌟</div>
+    <div style="flex:1;">
+      <div style="font-size:14px;font-weight:600;color:#B0006A;">AST — All Stars of Tomorrow</div>
+      <div style="font-size:11px;color:#E91E8C;margin-top:2px;">Extended-Hours Daycare · Healthcare Community</div>
+    </div>
+    <div style="text-align:right;">
+      <div class="phase-badge" style="background:#FBEAF0;color:#B0006A;">🌟 VISION & RESEARCH PHASE</div>
+      <div style="font-size:10px;color:#E91E8C;margin-top:4px;" id="ast-prog-label">0 of 0 complete</div>
+      <div class="bar-wrap" style="width:120px;margin-left:auto;margin-top:3px;"><div class="bar-fill" id="ast-prog-bar" style="background:#E91E8C;width:0%;"></div></div>
+    </div>
+  </div>
+
+  <div class="note-box" style="margin-bottom:12px;border-left:3px solid #E91E8C;">
+    🌟 <strong>Target launch: 2027–2028.</strong> You're solving a real problem — healthcare workers on 7–7 shifts have almost no childcare options past 6 PM. These tasks are about capturing the vision and doing foundational research so when the time comes, you're not starting from zero.
+  </div>
+
+  <div class="section-label">💡 VISION & CONCEPT</div>
+  <div class="task-list" id="ast-tasks-vision"></div>
+
+  <div class="section-label" style="margin-top:18px;">🔍 RESEARCH</div>
+  <div class="task-list" id="ast-tasks-research"></div>
+
+  <div class="section-label" style="margin-top:18px;">📋 EARLY PLANNING</div>
+  <div class="task-list" id="ast-tasks-planning"></div>
+</div>
+
+<!-- ═══════════════════════════════════════════════
+     AITG — ALL IN TRANSPORTATION GROUP
+═══════════════════════════════════════════════ -->
+<div class="page" id="page-aitg">
+  <div class="pg-title">All In Transportation Group</div>
+  <div class="pg-sub">Your task roadmap — check off as you go · progress saves automatically</div>
+
+  <div class="biz-header" style="background:#FAECE7;border-color:#F0997B;">
+    <div class="biz-icon" style="background:#C05020;">🚛</div>
+    <div style="flex:1;">
+      <div style="font-size:14px;font-weight:600;color:#712B13;">AITG — All In Transportation Group</div>
+      <div style="font-size:11px;color:#C05020;margin-top:2px;">Trucking · Freight · Commercial Transportation</div>
+    </div>
+    <div style="text-align:right;">
+      <div class="phase-badge" style="background:#FAECE7;color:#712B13;">🚛 OPERATIONAL</div>
+      <div style="font-size:10px;color:#C05020;margin-top:4px;" id="aitg-prog-label">0 of 0 complete</div>
+      <div class="bar-wrap" style="width:120px;margin-left:auto;margin-top:3px;"><div class="bar-fill" id="aitg-prog-bar" style="background:#C05020;width:0%;"></div></div>
+    </div>
+  </div>
+
+  <div class="note-box" style="margin-bottom:12px;border-left:3px solid #C05020;">
+    🚛 <strong>AITG is your active revenue business.</strong> Finances are tracked completely separately from personal. These tasks focus on staying legally compliant, operationally tight, and positioned to grow.
+  </div>
+
+  <div class="section-label">⚖️ LEGAL & COMPLIANCE</div>
+  <div class="task-list" id="aitg-tasks-legal"></div>
+
+  <div class="section-label" style="margin-top:18px;">⚙️ OPERATIONS</div>
+  <div class="task-list" id="aitg-tasks-ops"></div>
+
+  <div class="section-label" style="margin-top:18px;">📈 GROWTH</div>
+  <div class="task-list" id="aitg-tasks-growth"></div>
 </div>
 
 <script>
@@ -904,8 +1014,8 @@ function rndDtype(){
 function setDt(i,v){dtypes[i]=v;updSlots();lsv('sc_dtypes',dtypes);}
 function updSlots(){const s=dtypes.reduce((a,t)=>a+(t==='shift'?3:t==='fullday'?3:t==='post'?1:0),0)+2;document.getElementById('dtype-slots').innerHTML=`<strong>${s} business task slots</strong> — set no more than ${Math.min(s,4)} goals.`;}
 function setWkLbl(){const n=new Date(),s=new Date(n);s.setDate(n.getDate()-n.getDay());document.getElementById('wk-label').textContent='Week of '+s.toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});}
-const GF=['g-int','g-sss','g-sss-w','g-sts','g-sts-w','g-aitg','g-aitg-w','g-per','g-per-w','g-prot','g-cel','g-comp','g-blk','g-dif'];
-const GC=['g-sss-d','g-sts-d','g-aitg-d','g-per-d'];
+const GF=['g-int','g-sss','g-sss-w','g-sts','g-sts-w','g-aitg','g-aitg-w','g-ast','g-ast-w','g-per','g-per-w','g-prot','g-cel','g-comp','g-blk','g-dif'];
+const GC=['g-sss-d','g-sts-d','g-aitg-d','g-ast-d','g-per-d'];
 async function saveGoals(){
   const d={};GF.forEach(id=>{const e=document.getElementById(id);if(e)d[id]=e.value;});GC.forEach(id=>{const e=document.getElementById(id);if(e)d[id]=e.checked;});
   lsv('sc_goals',d);
@@ -1155,7 +1265,28 @@ const TSS_TASKS = {
   ]
 };
 
-// Task state stored in localStorage
+const AST_TASKS = {
+  vision: [
+    {id:'ast-v1', title:'Write the AST mission statement', note:'One paragraph: who you serve (healthcare workers), what you provide (extended-hours childcare), and why it matters. This becomes the foundation for everything — your pitch, your licensing application, your marketing.', priority:'med', tags:['brand']},
+    {id:'ast-v2', title:'Define your hours of operation', note:'Your competitive advantage is staying open past 6 PM. Map out what hours make sense: e.g. 6 AM–midnight, or 24-hour, or shift-aligned (6 AM–8 PM). Talk to other healthcare workers at your hospital about what they actually need.', priority:'med', tags:['ops']},
+    {id:'ast-v3', title:'Define your target age range', note:'Infant (6 weeks+)? Toddler? School-age? Each age group has different licensing requirements, ratios, and costs. Decide your focus before researching licensing.', priority:'med', tags:['ops','legal']},
+    {id:'ast-v4', title:'Create a vision board or concept document for AST', note:'Photos, layout ideas, brand colors, the feel of the space. This keeps the vision alive on the hard days and helps you communicate it to investors, landlords, or partners later.', priority:'low', tags:['brand']},
+  ],
+  research: [
+    {id:'ast-r1', title:'Research Texas childcare licensing requirements (HHSC)', note:'Texas Health and Human Services Commission (HHSC) regulates childcare centers. Go to hhs.texas.gov and look up "Child Care Licensing." Extended hours and overnight care have additional requirements.', priority:'high', tags:['legal'], url:'https://www.hhs.texas.gov/childcare'},
+    {id:'ast-r2', title:'Research staff-to-child ratios for Texas licensed centers', note:'Texas has strict ratios by age group (e.g. 1:4 for infants, 1:11 for school-age). Your staffing costs and building size will be built around these ratios. Get the exact numbers from HHSC.', priority:'high', tags:['legal','ops']},
+    {id:'ast-r3', title:'Research startup costs for a childcare center in Houston', note:'Typical range: $150K–$500K+ depending on size, location, and whether you lease or buy. Get a rough number so you know your funding target. SBA loans, CDFI grants, and childcare-specific grants exist.', priority:'med', tags:['finance']},
+    {id:'ast-r4', title:'Research Houston-area healthcare campuses and hospital districts', note:'Texas Medical Center, Memorial Hermann, HCA hospitals — find out where the concentration of healthcare workers is. Your location should be within 10–15 minutes of a major healthcare campus.', priority:'med', tags:['ops']},
+    {id:'ast-r5', title:'Look into childcare desert data for Houston', note:'The federal government tracks "childcare deserts" — areas with not enough licensed slots. Healthcare worker zip codes near medical centers likely qualify. This data helps with grant applications.', priority:'low', tags:['finance','ops']},
+    {id:'ast-r6', title:'Research competitors — who offers extended hours near medical centers?', note:'Search for daycares near Texas Medical Center that are open past 6 PM. There are very few — that\'s your opening. Document what exists, their hours, pricing, and gaps.', priority:'med', tags:['ops']},
+  ],
+  planning: [
+    {id:'ast-p1', title:'Open an AST savings/sinking fund', note:'Even $50/month set aside now adds up. Add AST as a sinking fund in the command center. When 2027 arrives you want a foundation — not starting from zero.', priority:'med', tags:['finance']},
+    {id:'ast-p2', title:'Connect with a SCORE mentor who knows childcare or small business', note:'SCORE (score.org) offers free mentoring from retired business executives. Find one with childcare, education, or franchise experience. Free and invaluable for planning a regulated business.', priority:'low', tags:['ops'], url:'https://www.score.org/'},
+    {id:'ast-p3', title:'Research childcare-specific business grants in Texas', note:'Texas Workforce Commission, Child Care Associates, and federal CCDBG funds sometimes have grants for new childcare providers, especially those serving underserved populations. Healthcare worker families likely qualify.', priority:'low', tags:['finance']},
+    {id:'ast-p4', title:'Create a simple 1-page business plan draft', note:'Not a formal document yet — just: concept, target market, hours, location idea, startup cost estimate, revenue model (tuition + subsidies). Revisit and refine annually until launch.', priority:'low', tags:['ops','finance']},
+  ]
+};
 let bizTasksDone = lld('sc_biz_tasks', {});
 
 function saveBizTasks() {
@@ -1231,6 +1362,22 @@ function renderAllBizTasks() {
   const tssAll = [...TSS_TASKS.brand,...TSS_TASKS.digital,...TSS_TASKS.legal];
   const tssDone = tssAll.filter(t=>bizTasksDone[t.id]).length;
   updateProgress('tss', tssDone, tssAll.length);
+
+  // AST
+  renderBizSection('ast-tasks-vision', AST_TASKS.vision);
+  renderBizSection('ast-tasks-research', AST_TASKS.research);
+  renderBizSection('ast-tasks-planning', AST_TASKS.planning);
+  const astAll = [...AST_TASKS.vision,...AST_TASKS.research,...AST_TASKS.planning];
+  const astDone = astAll.filter(t=>bizTasksDone[t.id]).length;
+  updateProgress('ast', astDone, astAll.length);
+
+  // AITG
+  renderBizSection('aitg-tasks-legal', AITG_TASKS.legal);
+  renderBizSection('aitg-tasks-ops', AITG_TASKS.ops);
+  renderBizSection('aitg-tasks-growth', AITG_TASKS.growth);
+  const aitgAll = [...AITG_TASKS.legal,...AITG_TASKS.ops,...AITG_TASKS.growth];
+  const aitgDone = aitgAll.filter(t=>bizTasksDone[t.id]).length;
+  updateProgress('aitg', aitgDone, aitgAll.length);
 }
 
 // ── LOAD FROM GOOGLE SHEETS ──
@@ -1269,6 +1416,11 @@ async function loadFromSheets(){
     });
     renderPlanner();
   }
+  if(data.notes&&data.notes.length){
+    notes=data.notes.map(r=>({id:r.id+'',title:r.title||'',body:r.body||'',tag:r.tag||'general',pinned:r.pinned==1||r.pinned===true,ts:parseInt(r.ts)||Date.now()}));
+    lsv('sc_notes',notes);
+    renderNotes();
+  }
 
   rndTx();rndDebt();rndSF();rndCal();rndBankCards();refreshOv();
   syncStatus('✓ All data loaded from Google Sheets','saved');
@@ -1298,7 +1450,7 @@ let plannerWeekOffset = 0;
 
 let plannerData = lld('sc_planner', {});
 let plannerRunning = lld('sc_planner_running', {
-  personal: [], notary: [], aitg: [], travel: []
+  personal: [], notary: [], aitg: [], travel: [], ast: []
 });
 
 function getPlannerWeekKey(offset) {
@@ -1457,10 +1609,11 @@ function renderPlanner() {
 
 // ── RUNNING LISTS ──
 const RUN_COLS = [
-  { key:'personal', label:'🌿 PERSONAL',  color:'#2A6B1A', light:'#EAF3DE' },
-  { key:'notary',   label:'📋 NOTARY',    color:'#1A6DB5', light:'#E6F1FB' },
-  { key:'aitg',     label:'🚛 AITG',      color:'#993C1D', light:'#FAECE7' },
-  { key:'travel',   label:'✈️ TRAVEL',    color:'#C47A15', light:'#FAEEDA' },
+  { key:'personal', label:'🌿 PERSONAL',       color:'#2A6B1A', light:'#EAF3DE' },
+  { key:'notary',   label:'📋 NOTARY',          color:'#1A6DB5', light:'#E6F1FB' },
+  { key:'aitg',     label:'🚛 AITG',            color:'#993C1D', light:'#FAECE7' },
+  { key:'travel',   label:'✈️ TRAVEL',          color:'#C47A15', light:'#FAEEDA' },
+  { key:'ast',      label:'🌟 ALL STARS (AST)', color:'#E91E8C', light:'#FBEAF0' },
 ];
 
 function renderRunningLists() {
@@ -1526,6 +1679,135 @@ function clearAllRunning() {
   renderRunningLists();
 }
 
+// ══════════════════════════════════════════════
+// NOTES
+// ══════════════════════════════════════════════
+let notes = lld('sc_notes', []);
+
+const NOTE_TAGS = [
+  {val:'general', label:'📝 General', bg:'var(--gray-l)', c:'var(--text)'},
+  {val:'sss',     label:'📋 SSS',     bg:'#E6F1FB',       c:'#0C447C'},
+  {val:'sts',     label:'✈️ STS',     bg:'#FAEEDA',       c:'#854F0B'},
+  {val:'aitg',    label:'🚛 AITG',    bg:'#FAECE7',       c:'#712B13'},
+  {val:'tss',     label:'⭐ TSS',     bg:'#EEEDFE',       c:'#3C3489'},
+  {val:'ast',     label:'🌟 AST',     bg:'#FBEAF0',       c:'#B0006A'},
+  {val:'personal',label:'🌿 Personal',bg:'#EAF3DE',       c:'#2A6B1A'},
+  {val:'idea',    label:'💡 Idea',    bg:'#FAEEDA',       c:'#633806'},
+  {val:'urgent',  label:'🔴 Urgent',  bg:'#FCEBEB',       c:'#A32D2D'},
+];
+
+function noteTagStyle(val) {
+  const t = NOTE_TAGS.find(t=>t.val===val) || NOTE_TAGS[0];
+  return `background:${t.bg};color:${t.c};`;
+}
+
+function renderNotes() {
+  const ct = document.getElementById('notes-container');
+  if (!ct) return;
+  const sorted = [...notes].sort((a,b) => (b.pinned?1:0)-(a.pinned?1:0) || b.ts-a.ts);
+  if (!sorted.length) {
+    ct.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:40px 20px;color:var(--t3);">
+      <div style="font-size:32px;margin-bottom:8px;">📝</div>
+      <div style="font-size:13px;font-weight:600;margin-bottom:4px;">No notes yet</div>
+      <div style="font-size:11px;">Hit "+ New note" to start a brain dump</div>
+    </div>`;
+    return;
+  }
+  ct.innerHTML = '';
+  sorted.forEach(note => {
+    const tag = NOTE_TAGS.find(t=>t.val===note.tag) || NOTE_TAGS[0];
+    const d = new Date(note.ts);
+    const dateStr = `${d.getMonth()+1}/${d.getDate()} ${d.getHours()%12||12}:${String(d.getMinutes()).padStart(2,'0')}${d.getHours()>=12?'pm':'am'}`;
+    const card = document.createElement('div');
+    card.className = 'note-card' + (note.pinned?' pinned':'');
+    card.style.borderLeftColor = tag.bg === 'var(--gray-l)' ? 'var(--border)' : tag.c;
+    card.style.borderLeftWidth = '3px';
+    card.innerHTML = `
+      <div class="note-card-top">
+        <input class="note-title-inp" type="text" value="${(note.title||'').replace(/"/g,'&quot;')}" placeholder="Title (optional)..."
+          onchange="updateNote('${note.id}','title',this.value)"
+          onblur="updateNote('${note.id}','title',this.value)" />
+        <button class="note-pin-btn" onclick="toggleNotePin('${note.id}')" title="${note.pinned?'Unpin':'Pin'}">${note.pinned?'📌':'📍'}</button>
+      </div>
+      <textarea class="note-body-inp" placeholder="Write anything..."
+        onchange="updateNote('${note.id}','body',this.value)"
+        onblur="updateNote('${note.id}','body',this.value)">${note.body||''}</textarea>
+      <div class="note-footer">
+        <select class="note-tag-sel" style="${noteTagStyle(note.tag)}" onchange="updateNote('${note.id}','tag',this.value);renderNotes();">
+          ${NOTE_TAGS.map(t=>`<option value="${t.val}" ${note.tag===t.val?'selected':''}>${t.label}</option>`).join('')}
+        </select>
+        <span class="note-ts">${dateStr}</span>
+        <button class="note-del-btn" onclick="deleteNote('${note.id}')">✕ delete</button>
+      </div>`;
+    ct.appendChild(card);
+  });
+}
+
+function addNote() {
+  const note = { id: Date.now()+'', title:'', body:'', tag:'general', pinned:false, ts:Date.now() };
+  notes.unshift(note);
+  saveNotes();
+  renderNotes();
+  // focus the new card's textarea
+  setTimeout(()=>{
+    const ta = document.querySelector('.note-body-inp');
+    if(ta) ta.focus();
+  }, 50);
+}
+
+function updateNote(id, field, val) {
+  const n = notes.find(n=>n.id===id);
+  if(n){ n[field]=val; saveNotes(); }
+}
+
+function toggleNotePin(id) {
+  const n = notes.find(n=>n.id===id);
+  if(n){ n.pinned=!n.pinned; saveNotes(); renderNotes(); }
+}
+
+function deleteNote(id) {
+  if(!confirm('Delete this note?')) return;
+  notes = notes.filter(n=>n.id!==id);
+  saveNotes(); renderNotes();
+}
+
+function clearDoneNotes() {
+  if(!confirm('Delete all unpinned notes?')) return;
+  notes = notes.filter(n=>n.pinned);
+  saveNotes(); renderNotes();
+}
+
+async function saveNotes() {
+  lsv('sc_notes', notes);
+  await apiPost('saveNotes', notes.map(n=>({id:n.id,title:n.title,body:n.body,tag:n.tag,pinned:n.pinned?1:0,ts:n.ts})));
+}
+
+// ══════════════════════════════════════════════
+// AITG TASKS
+// ══════════════════════════════════════════════
+const AITG_TASKS = {
+  legal: [
+    {id:'aitg-l1', title:'Confirm AITG LLC is active with TXSOS', note:'Go to search.sos.state.tx.us and verify All In Transportation Group shows as Active. While you\'re there, confirm the registered agent and address are current.', priority:'high', tags:['legal'], url:'https://www.sos.state.tx.us/'},
+    {id:'aitg-l2', title:'Confirm AITG franchise tax is filed and current with Comptroller', note:'Same portal as SSS — log into comptroller.texas.gov/taxes/franchise and verify AITG is active and all years are filed. Don\'t let this become another forfeiture.', priority:'high', tags:['legal','finance'], url:'https://comptroller.texas.gov/taxes/franchise/'},
+    {id:'aitg-l3', title:'Verify USDOT number and MC authority are active', note:'Trucking companies need a USDOT number and Motor Carrier (MC) authority from FMCSA. Check your status at safer.fmcsa.dot.gov — make sure nothing is revoked or suspended.', priority:'high', tags:['legal'], url:'https://safer.fmcsa.dot.gov/'},
+    {id:'aitg-l4', title:'Confirm commercial truck insurance is current', note:'Verify your liability coverage meets FMCSA minimums ($750K for general freight). Keep the certificate of insurance filed with your broker and accessible at all times.', priority:'high', tags:['legal','finance']},
+    {id:'aitg-l5', title:'Confirm IFTA fuel tax registration is current', note:'If trucks operate in multiple states, IFTA quarterly fuel tax reports are required. Check your IFTA license expiration and quarterly filing status.', priority:'med', tags:['legal','finance']},
+  ],
+  ops: [
+    {id:'aitg-o1', title:'Set up AITG accounting separate from personal finances', note:'AITG finances should be completely separate. If you don\'t have dedicated trucking bookkeeping software, QuickBooks Self-Employed or TruckingOffice are good options. Every fuel, maintenance, and load payment tracked separately.', priority:'high', tags:['finance','ops']},
+    {id:'aitg-o2', title:'Document your current trucks, drivers, and active lanes', note:'Write down: how many trucks, how many drivers, what lanes you\'re running, and who your current brokers/shippers are. This is your operational baseline.', priority:'med', tags:['ops']},
+    {id:'aitg-o3', title:'Review and optimize broker relationships', note:'Are you using load boards (DAT, Truckstop.com)? Do you have any direct shipper relationships? Direct shippers pay better than brokers. Identify your top 3 revenue sources and build those relationships.', priority:'med', tags:['ops']},
+    {id:'aitg-o4', title:'Set up ELD (Electronic Logging Device) compliance', note:'FMCSA requires ELDs for most commercial trucks. Verify your drivers are compliant and logs are being maintained properly. Non-compliance = fines and out-of-service orders.', priority:'high', tags:['legal','ops']},
+    {id:'aitg-o5', title:'Create a driver handbook or basic operating procedures doc', note:'Even a simple 1-page document covering your expectations, load acceptance process, and communication standards protects you legally and keeps operations consistent.', priority:'low', tags:['ops']},
+  ],
+  growth: [
+    {id:'aitg-g1', title:'Review AITG monthly revenue and expenses', note:'Pull your last 3 months of AITG income and expenses. What\'s your average revenue per truck? What\'s your cost per mile? You can\'t grow what you can\'t measure.', priority:'med', tags:['finance']},
+    {id:'aitg-g2', title:'Research freight factoring if cash flow is tight', note:'Factoring companies advance you 90–97% of invoice value immediately instead of waiting 30–60 days for broker payment. OTR Capital, Triumph Business Capital, and RTS Financial are trucking-specific.', priority:'low', tags:['finance']},
+    {id:'aitg-g3', title:'Identify one direct shipper relationship to pursue', note:'One direct shipper contract can replace multiple broker loads at better rates. Think about what\'s near your home base in Houston — petrochemical, medical supply, food distribution all move heavy freight.', priority:'low', tags:['ops']},
+    {id:'aitg-g4', title:'Research adding another truck or driver — what would it take?', note:'What\'s your break-even per truck? What\'s the cost to add one more? Having this number ready means you can move fast when the opportunity comes.', priority:'low', tags:['ops','finance']},
+  ]
+};
+
 window.addEventListener('DOMContentLoaded',()=>{
   rndSched();
   rndDtype();
@@ -1540,6 +1822,7 @@ window.addEventListener('DOMContentLoaded',()=>{
   rndBankCards();
   refreshOv();
   renderAllBizTasks();
+  renderNotes();
   renderPlanner();
   loadFromSheets();
 });
