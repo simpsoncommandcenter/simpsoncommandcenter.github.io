@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -814,7 +813,7 @@ function calcSplit(){
 const DAYS=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
 const BIZ=['SSS','STS','AITG'];
 const BIZC=['b-blue','b-yel','b-ora'];
-let dTypes=['shift','post','shift','double','post','fullday','off'];
+let dTypes=lld('sc_dTypes',['shift','post','shift','double','post','fullday','off']);
 let trOn=[false,false,false,false,false,false,false];
 let trT=['11:00 AM','11:00 AM','11:00 AM','11:00 AM','11:00 AM','11:00 AM','11:00 AM'];
 let scOn=[false,false,false,false,false,false,false];
@@ -1003,7 +1002,7 @@ function rndSched(){
   const slots=sc*3+fc*3+pc;
   document.getElementById('sbar').innerHTML=`<strong>${sc}</strong> shifts &nbsp;·&nbsp;<strong>${dc}</strong> double &nbsp;·&nbsp;<strong>${pc}</strong> post-shift &nbsp;·&nbsp;<strong>${fc}</strong> full &nbsp;·&nbsp;<strong>${oc}</strong> off &nbsp;·&nbsp;<span style="color:var(--gym-c);"><strong>${gc}</strong> trainer</span> &nbsp;·&nbsp;<span style="color:var(--sc-c);"><strong>${scc}</strong> self care</span> &nbsp;·&nbsp;<span style="padding-left:8px;border-left:1px solid var(--border);"><strong>${slots}</strong> task slots</span>`;
 }
-function sDay(i,t){dTypes[i]=t;rndSched();}
+function sDay(i,t){dTypes[i]=t;lsv('sc_dTypes',dTypes);rndSched();}
 function togTr(i){trOn[i]=!trOn[i];rndSched();}
 function sTrT(i,v){trT[i]=v;rndSched();}
 function togSc(i){scOn[i]=!scOn[i];rndSched();}
@@ -1509,7 +1508,7 @@ function renderPlannerDay(col, dateObj, dayIdx, weekKey, isToday) {
   // ensure arrays exist
   ['scheduled','workbiz','personal'].forEach(k => { if(!dayData[k]) dayData[k] = []; });
 
-  const tp = dayIdx === 0 ? 'shift' : (dTypes[dayIdx] || 'off');
+  const tp = dTypes[dayIdx] || 'off';
   const ts = DAY_TYPE_STYLE[tp] || DAY_TYPE_STYLE.off;
 
   const dateStr = `${PLAN_MONTHS[dateObj.getMonth()]} ${dateObj.getDate()}`;
