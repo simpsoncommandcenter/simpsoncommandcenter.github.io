@@ -1215,7 +1215,6 @@ const SSS_TASKS = {
     {id:'sss-l3', title:'Confirm SSS shows "Active" in Comptroller portal', note:'Do not move to the next step until the Comptroller shows SSS as active/in good standing. This must happen first.', priority:'high', tags:['legal']},
     {id:'sss-l4', title:'File Certificate of Reinstatement (Form 801) with TXSOS', note:'Go to sos.state.tx.us → file Form 801 → $75 filing fee. Comptroller must be cleared first or TXSOS will reject it.', priority:'high', tags:['legal'], url:'https://www.sos.state.tx.us/'},
     {id:'sss-l5', title:'Confirm SSS shows "Active" on TXSOS search', note:'Go to search.sos.state.tx.us and verify Simpson Signing Solutions shows as Active — not Forfeited. Take a screenshot for your records.', priority:'high', tags:['legal']},
-    {id:'sss-l6', title:'Switch registered agent to Northwest Registered Agent — SSS', note:'Your personal address is currently public record because you are listed as your own registered agent. Sign up at northwestregisteredagent.com ($125/yr), then file Form 401 with TXSOS ($15 fee) to update to Northwest. Do this AFTER SSS reinstatement is confirmed. Northwest will file Form 401 for you.', priority:'high', tags:['legal','ops'], url:'https://www.northwestregisteredagent.com/'},
   ],
   brand: [
     {id:'sss-b1', title:'Decide: keep Squarespace or move to new platform', note:'Squarespace is limiting your designer. Options: Wix, WordPress, Webflow, or Framer. Wix or WordPress give you the most control for notary/signing sites without needing a developer.', priority:'med', tags:['web','brand']},
@@ -1238,8 +1237,6 @@ const SSS_TASKS = {
 
 const STS_TASKS = {
   foundation: [
-   {id:'sts-f0a', title:'Switch registered agent to Northwest Registered Agent — STS', note:'Your personal address is public record because you are listed as your own registered agent on STS. Sign up at northwestregisteredagent.com ($125/yr — covers all your LLCs), then file Form 401 with TXSOS ($15 fee). Northwest will handle the filing for you. Your address is publicly searchable right now.', priority:'high', tags:['legal','ops'], url:'https://www.northwestregisteredagent.com/'},
-{id:'sts-f0b', title:'Confirm STS registered agent update is reflected on TXSOS', note:'After filing Form 401, search at search.sos.state.tx.us and verify Northwest address now appears as the registered office instead of your personal address.', priority:'high', tags:['legal']},
     {id:'sts-f1', title:'Confirm STS LLC registered agent and address are current', note:'Log into sos.state.tx.us and verify your registered agent info is up to date. If anything changed (address, agent), update it now to avoid future forfeiture.', priority:'high', tags:['legal']},
     {id:'sts-f2', title:'Confirm STS franchise tax is filed and current with Comptroller', note:'Same portal as SSS — check that STS is active and all years are filed. This is how SSS got forfeited, so verify STS now while you\'re thinking about it.', priority:'high', tags:['legal','finance']},
     {id:'sts-f3', title:'Choose a host agency and sign the ICA (Independent Contractor Agreement)', note:'As a travel agent you need a host agency to access GDS booking systems and supplier commissions. Top options: Travel Experts, Nexion, Avoya Travel. Compare their split, fees, and cruise supplier relationships.', priority:'high', tags:['ops']},
@@ -1459,19 +1456,7 @@ let plannerWeekOffset = 0;
 let plannerData = lld('sc_planner', {});
 let plannerRunning = lld('sc_planner_running', {
   personal: [], notary: [], aitg: [], travel: [], ast: []
-});if (!plannerRunning.notary) plannerRunning.notary = [];
-const raAlreadyAdded = plannerRunning.notary.some(item => item.text && item.text.includes('registered agent'));
-if (!raAlreadyAdded) {
-  plannerRunning.notary.unshift({ id: 'ra-remind-1', text: '🔒 Switch registered agent to Northwest for SSS, STS & AITG — $125/yr + $15 Form 401 per LLC — removes your personal address from public record', done: false });
-  lsv('sc_planner_running', plannerRunning);
-}
-  if (!plannerRunning.notary) plannerRunning.notary = [];
-const raAlreadyAdded = plannerRunning.notary.some(item => item.text && item.text.includes('registered agent'));
-if (!raAlreadyAdded) {
-  plannerRunning.notary.unshift({ id: 'ra-remind-1', text: '🔒 Switch registered agent to Northwest for SSS, STS & AITG — $125/yr + $15 Form 401 per LLC — removes your personal address from public record', done: false });
-  lsv('sc_planner_running', plannerRunning);
-}
-
+});
 
 function getPlannerWeekKey(offset) {
   const d = new Date();
@@ -1807,8 +1792,6 @@ async function saveNotes() {
 // ══════════════════════════════════════════════
 const AITG_TASKS = {
   legal: [
-   {id:'aitg-l0a', title:'Switch registered agent to Northwest Registered Agent — AITG', note:'Your personal address is public record because you are listed as your own registered agent on AITG. Sign up at northwestregisteredagent.com ($125/yr — one account covers all your LLCs), then file Form 401 with TXSOS ($15 fee). Northwest will file it for you.', priority:'high', tags:['legal','ops'], url:'https://www.northwestregisteredagent.com/'},
-{id:'aitg-l0b', title:'Confirm AITG registered agent update is reflected on TXSOS', note:'After filing Form 401, search at search.sos.state.tx.us and verify Northwest address now appears as the registered office instead of your personal address.', priority:'high', tags:['legal']},
     {id:'aitg-l1', title:'Confirm AITG LLC is active with TXSOS', note:'Go to search.sos.state.tx.us and verify All In Transportation Group shows as Active. While you\'re there, confirm the registered agent and address are current.', priority:'high', tags:['legal'], url:'https://www.sos.state.tx.us/'},
     {id:'aitg-l2', title:'Confirm AITG franchise tax is filed and current with Comptroller', note:'Same portal as SSS — log into comptroller.texas.gov/taxes/franchise and verify AITG is active and all years are filed. Don\'t let this become another forfeiture.', priority:'high', tags:['legal','finance'], url:'https://comptroller.texas.gov/taxes/franchise/'},
     {id:'aitg-l3', title:'Verify USDOT number and MC authority are active', note:'Trucking companies need a USDOT number and Motor Carrier (MC) authority from FMCSA. Check your status at safer.fmcsa.dot.gov — make sure nothing is revoked or suspended.', priority:'high', tags:['legal'], url:'https://safer.fmcsa.dot.gov/'},
